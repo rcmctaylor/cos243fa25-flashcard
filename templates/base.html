@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    <link rel="stylesheet" href="style.css" />
+    <title>{% block title %}{% endblock %} - My Webpage</title>
+    {% endblock %}
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/learn/">Learn!</a>
+        <a href="/cards/">View Cards</a>
+    </nav>
+    <section id="content">{% block content %}{% endblock %}</section>
+    <footer>
+        {% block footer %}
+        &copy; Copyright 2025 by <a href="http://domain.invalid/">you</a>.
+        {% endblock %}
+    </footer>
+</body>
+</html>

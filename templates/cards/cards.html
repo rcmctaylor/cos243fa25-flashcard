@@ -1,0 +1,11 @@
+{% extends "/base.html" %}
+{% block title %}My Flashcard Website{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+    <h1>Flashcards Study Guide</h1>       
+    {% for card in cards %}
+        <li>{{card.front}} - {{card.back}}</li><a href="/cards/{{card.id}}?action=edit">View</a>  
+    {% endfor %}
+{% endblock %}

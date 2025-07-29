@@ -1,0 +1,12 @@
+{% extends "/base.html" %}
+{% block title %}Learn!{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+        <h1>Learn!</h1>       
+        {{card.front}}
+        <button onclick="showElement()">Show answer</button>
+        <a href="/learn">Next question -></a>
+        <section id="card_back" class="hidden">{{card.back}}</section>
+ {% endblock %}

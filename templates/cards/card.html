@@ -1,0 +1,10 @@
+{% extends "/base.html" %}
+{% block title %}View Flash Cards{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+        <h1>Flashcard</h1>
+        {{action}}
+        {{card.front}} - {{card.back}} 
+ {% endblock %}
