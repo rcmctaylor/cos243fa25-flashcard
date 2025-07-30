@@ -1,5 +1,5 @@
 {% extends "/base.html" %}
-{% block title %}Learn!{% endblock %}
+{% import "/macros/card.html" as card_macro %}
 {% block head %}
     {{ super() }}
 {% endblock %}
@@ -9,4 +9,11 @@
         <button onclick="showElement()">Show answer</button>
         <a href="/learn">Next question -></a>
         <section id="card_back" class="hidden">{{card.back}}</section>
+        <div class="card-grid" onclick="document.getElementById('answer').classList.toggle('fadeIn')">
+            <div class="card">            
+                <div class="card-content">
+                <div class="cardFront">{{card.front}}</div><div id="answer" class="cardBack card-answer fadeOut">{{card.back}}</div>
+                </div>                         
+            </div>
+        </div>
  {% endblock %}

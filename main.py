@@ -163,8 +163,6 @@ def add_sets(request: Request, session:SessionDep):
     
 @app.post("/sets/add")
 async def create_set(session: SessionDep, name: str = Form(...)):
-#def create_card(card: Card, session: SessionDep):
-    #db_card = Card.model_validate(card)
     db_set = Set(name=name)
     session.add(db_set)
     session.commit()

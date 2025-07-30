@@ -1,4 +1,5 @@
 {% extends "/base.html" %}
+{% import "/macros/card.html" as card_macro %}
 {% block title %}View Flash Cards{% endblock %}
 {% block head %}
     {{ super() }}
@@ -25,9 +26,9 @@
         {% if not cards|length %}
             There are no cards in this set yet.
         {% endif %}
-        <ul>
-        {% for card in cards %}
-            <li>{{card.front}}</li>
-        {% endfor %}
-        </ul>
+        <div class="card-grid">
+        {% for card in cards %}                        
+            {{ card_macro.card(card) }}
+        {% endfor %}        
+        </div>
  {% endblock %}

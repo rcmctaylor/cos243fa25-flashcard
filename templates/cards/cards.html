@@ -1,4 +1,5 @@
 {% extends "/base.html" %}
+{% import "/macros/card.html" as card_macro %}
 {% block title %}My Flashcard Website{% endblock %}
 {% block head %}
     {{ super() }}
@@ -6,7 +7,20 @@
 {% block content %}
     <h1>Flashcards Study Guide</h1>   
     <a href="{{url_for('create_card')}}">Add a Card</a>    
+    <div class="card-grid">
     {% for card in cards %}
-        <li>{{card.front}} - {{card.back}}</li><a href="/cards/{{card.id}}?action=view">View</a>  
+    <!--Pre-Macro Code-->
+    <!--
+        <div class="card">            
+                <a href="/cards/{{card.id}}?action=view">
+                <div class="card-content">
+                <div class="cardFront">{{card.front}}</div><div class="cardBack">{{card.back}}</div>
+                </div>         
+                </a>
+        </div>
+        -->        
+        {{ card_macro.card(card) }}
+
     {% endfor %}
+    </div>
 {% endblock %}
