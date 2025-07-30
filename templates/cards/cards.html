@@ -4,8 +4,9 @@
     {{ super() }}
 {% endblock %}
 {% block content %}
-    <h1>Flashcards Study Guide</h1>       
+    <h1>Flashcards Study Guide</h1>   
+    <a href="{{url_for('create_card')}}">Add a Card</a>    
     {% for card in cards %}
-        <li>{{card.front}} - {{card.back}}</li><a href="/cards/{{card.id}}?action=edit">View</a>  
+        <li>{{card.front}} - {{card.back}}</li><a href="/cards/{{card.id}}?action=view">View</a>  
     {% endfor %}
 {% endblock %}

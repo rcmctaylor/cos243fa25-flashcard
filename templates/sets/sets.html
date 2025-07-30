@@ -1,0 +1,12 @@
+{% extends "/base.html" %}
+{% block title %}My Flashcard Sets{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+    <h1>Flashcards Study Guide</h1>   
+    <a href="{{url_for('create_set')}}">Create new Set</a>    
+    {% for set in sets %}
+        <li>{{set.name}}</li><a href="/sets/{{set.id}}">View</a>  
+    {% endfor %}
+{% endblock %}

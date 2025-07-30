@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     {% block head %}
-    <link rel="stylesheet" href="style.css" />
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
     <title>{% block title %}{% endblock %} - My Webpage</title>
     {% endblock %}
 </head>
@@ -10,6 +10,7 @@
     <nav>
         <a href="/">Home</a>
         <a href="/learn/">Learn!</a>
+        <a href="/sets/">View Sets</a>
         <a href="/cards/">View Cards</a>
     </nav>
     <section id="content">{% block content %}{% endblock %}</section>

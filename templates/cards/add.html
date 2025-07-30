@@ -5,16 +5,20 @@
 {% endblock %}
 {% block content %}
         <h1>All Flashcards</h1>
-
             <form action="/cards/add" method="post">
                 Front: <input type="text" name="front"><br>
                 Back: <input type="text" name="back"><br>
+                Set: <select name="set_id">
+                        <option name="" value=""></option>
+                    {% for set in sets %}     
+                        {% if set.id == set_id %}                   
+                            <option selected="selected" name="{{set.name}}" value="{{set.id}}" >{{set.name}}</option>
+                        {% else %}
+                            <option name="{{set.name}}" value="{{set.id}}">{{set.name}}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
                 <input type="submit" value="Submit">
             </form>
 
-        <ul>            
-            {% for card in cards %}
-            <li>{{card.front}}</li>
-            {% endfor %}
-        </ul>
  {% endblock %}
