@@ -1,0 +1,195 @@
+/* bad css example*/
+/*
+.card{
+    display: inline-block;
+    border: solid 1px black;
+    max-width: 100px;
+    height: 100px;
+    padding: ;
+}
+    */
+
+body{
+    background-color: antiquewhite;
+}
+
+.content-wrapper{
+    min-height: 100vh;
+    display:flex;    
+    flex-direction: column;    
+    border:1px solid red;
+}
+
+/* Every flex item in the content */
+.content-wrapper > *{
+    order:9999;
+    border:1px solid black;    
+    flex:1;
+}
+
+.header{
+    text-align: center;
+}
+
+#content{
+    justify-content: center;
+    align-items: center;
+}
+
+footer{
+    flex:1;
+    min-height: 200px;
+}
+
+/*Nice Grid css example*/
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem; /* adds a gap in between the cards */ 
+  padding: 1rem;
+}
+
+
+
+/* Individual card styling */
+.card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  aspect-ratio: 1 / 1; /* Makes the card square */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: center;
+  font-size: 1rem;
+  color: #333;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;  
+}
+
+/* Hover effect */
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.card .card-content{     
+    position: relative;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+.card a {
+    text-decoration:none; 
+  color:inherit;
+  height: 100%;
+}
+
+.card *:not(a) {
+  position: relative;
+  z-index: 2;
+}
+
+.cardBack{    
+    padding: 0.5rem;
+    background-color: rgba(127, 255, 0, 0.70);
+    border-radius: 5px;
+}
+
+.fadeOut {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s linear 300ms, opacity 300ms;
+}
+
+.fadeIn {
+  visibility: visible;
+  opacity: 1;
+  transition: visibility 0s linear 0s, opacity 300ms;
+}
+
+#topNav{
+    
+}
+
+#topNav ul{
+    display:flex;
+    justify-content: flex-start;
+    border: 1px solid goldenrod;
+    list-style: none;   
+}
+
+
+#topNav li{
+    flex: 3;
+}
+
+#topNav .social{
+    flex:1;
+}
+
+.toggle-nav{
+    display:none;
+}
+
+#content{
+    display: flex;
+    flex-direction: column;
+    height: 50vh; /*vh is. % viewport height*/ 
+}
+
+footer{
+    background: #bdc3c7;
+    height: 100px;
+    /*align-self: flex-end;*/
+}
+
+/* Responsive Design*/
+
+@media all and (max-width:1000px){
+   
+    #topNav ul{
+        flex-wrap:wrap;        
+    }
+
+    #topNav li{
+        flex: 1 1 50%;
+    }
+
+    #topNav .social{
+        flex: 1 1 25%;
+    }
+
+}
+
+@media all and (max-width:500px){
+   
+    #topNav li{
+        flex-basis:100%;
+    }
+
+    #topNav{
+        order:1;        
+    }
+
+    .content-wrapper{
+    }
+
+    .toggle-nav{
+        display:block;                        
+        text-align: center;
+    }
+
+    #topNav ul{
+        display:none;
+    }
+
+    #topNav ul.open{
+        display:flex;
+    }
+
+    .header{
+        order:2;
+    }
+}
