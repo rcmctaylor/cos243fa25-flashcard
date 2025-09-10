@@ -1,0 +1,8 @@
+<h1>Flashcard App</h1>
+
+<ul>
+{% for card in cards %}
+    <li><a href="{{url_for('get_card', card_id=card.id)}}"> {{card.question}}</a></li>
+    <li><a href="/cards/{{card.id}}"> {{card.question}}</a></li>
+{% endfor %}
+</ul>
