@@ -12,14 +12,15 @@ class Card(BaseModel):
     id:int
     question:str
     answer:str
+    set_id: int
 
 class Set(BaseModel):
     id: int
     name: str
 
 card_list = [
-  Card(id=1, question="Where is Taylor located?", answer="Upland, IN"),
-  Card(id=2, question="What is the capital of Indiana?", answer="Indianapolis, IN")
+  Card(id=1, question="Where is Taylor located?", answer="Upland, IN", set_id=1),
+  Card(id=2, question="What is the capital of Indiana?", answer="Indianapolis, IN", set_id=1)
 ]
 
 
