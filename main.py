@@ -4,33 +4,46 @@ from fastapi.templating import Jinja2Templates
 from fastapi import Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from sqlmodel import Field, SQLModel, Relationship
+from contextlib import asynccontextmanager
+from db.session import create_db_and_tables, SessionDep
 
 templates = Jinja2Templates(directory="templates")
 
-app = FastAPI()
+#Database code missing
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Load the DB
+    create_db_and_tables()
+    yield
+
+app = FastAPI(lifespan=lifespan)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-class Card(BaseModel):
-    id:int
-    question:str
-    answer:str
-    attempts: int = 0
-    successful: int = 0
-    set_id: int
+class Set(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    name: str    
+    cards: list["Card"] = Relationship(back_populates="set")
 
-class Set(BaseModel):
-    id: int
-    name: str
+class Card(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    front: str
+    back: str
+    set_id: int | None = Field(default=None, foreign_key="set.id")
+    set: Set | None = Relationship(back_populates="cards")
 
-class User(BaseModel):
-    id: int
+class User(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
     name: str
     email: str
 
-class Deck(BaseModel):
-    id:int
+#Let's tackle this one later because it's a many to many relationship
+#This will be an advanced feature for the future
+class Deck(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    name: str    
 
-
+'''
 user_list =[
     User(id=1, name="Dave", email="rcmc@taylor.edu"),
     User(id=2, name="Bob", email="bob@example.com")
@@ -42,7 +55,11 @@ card_list = [
   Card(id=1, question="Where is Taylor located?", answer="Upland, IN", set_id=1),
   Card(id=2, question="What is the capital of Indiana?", answer="Indianapolis, IN", set_id=1)
 ]
+'''
 
+user_list = []
+card_list = []
+set_list = []
 
 
 @app.get("/", response_class=HTMLResponse)
