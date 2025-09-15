@@ -28,8 +28,8 @@ class Set(SQLModel, table=True):
 
 class Card(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    front: str
-    back: str
+    question: str
+    answer: str
     set_id: int | None = Field(default=None, foreign_key="set.id")
     set: Set | None = Relationship(back_populates="cards")
 
@@ -80,20 +80,25 @@ async def get_cards(q:str=""):
 
 #Path Parameter
 @app.get("/cards/{card_id}", name="get_card", response_class=HTMLResponse)
-async def get_card_by_id(card_id:int, request:Request):
+async def get_card_by_id(card_id:int, request:Request,):
     current_card = None
     for card in card_list:
         if card.id == card_id:
             current_card = card
+
     return templates.TemplateResponse(
         request=request, name="card.html", context={"card": current_card}
     )
 
 #Post Request to add card
 @app.post("/card/add")
-async def add_card(card:Card):
-    card_list.append(card)
-    return card_list
+async def add_card(session: SessionDep, card:Card):
+    #card_list.append(card)
+    db_card = Card(question=card.question, answer=card.answer, set_id=card.set_id)
+    session.add(db_card) #add card to session
+    session.commit() #save Changes to database
+    session.refresh(db_card) #Refreshesh the db_card object with the latest data from the database, like the auto-generated id
+    return db_card
 
 @app.get("/sets", name="get_set", response_class=HTMLResponse)
 async def get_sets(session: SessionDep, request:Request):
