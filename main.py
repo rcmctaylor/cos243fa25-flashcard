@@ -4,12 +4,13 @@ from fastapi.templating import Jinja2Templates
 from fastapi import Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from sqlmodel import Field, SQLModel, Relationship
+from sqlmodel import Field, SQLModel, Relationship, select
 from contextlib import asynccontextmanager
 from db.session import create_db_and_tables, SessionDep
 
 templates = Jinja2Templates(directory="templates")
 
+#new comment for git
 #Database code missing
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -95,9 +96,10 @@ async def add_card(card:Card):
     return card_list
 
 @app.get("/sets", name="get_set", response_class=HTMLResponse)
-async def get_sets(request:Request):
+async def get_sets(session: SessionDep, request:Request):
+    sets = session.exec(select(Set).order_by(Set.name)).all()
     return templates.TemplateResponse(
-        request=request, name="sets.html", context={"sets": set_list}
+        request=request, name="sets.html", context={"sets": sets}
     )
 
 @app.get("/users", name="get_user", response_class=HTMLResponse)
@@ -105,3 +107,11 @@ async def get_users(request:Request):
     return templates.TemplateResponse(
         request=request, name="users.html", context={"users": user_list}
     )
+
+@app.post("/sets/add")
+async def create_set(session: SessionDep, set:Set):
+    db_set = Set(name=set.name)
+    session.add(db_set)
+    session.commit()
+    session.refresh(db_set)
+    return db_set
