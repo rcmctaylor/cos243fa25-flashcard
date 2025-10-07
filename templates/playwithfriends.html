@@ -1,0 +1,53 @@
+<h1>Trivia Game!</h1>
+
+{% if not user_name or user_name is none %}
+<section id="login">
+    <form action="/playwithfriends" method="post">
+        <p>What is your name?</p>
+        <input type="text" id="user_name" name="user_name"/>
+        <button>Enter</button>
+    </form>
+    
+</section>
+{% else %}
+<h2>Welcome {{user_name}}</h2>
+<section class="chat">
+    <ul id="messages"></ul>
+    <form action="" onsubmit="sendMessage(event)">
+        <input type="text" id="messageText"/>
+        <button>Send!</button>
+    </form>
+</section>
+{% endif %}
+<script>
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`
+        const parts = value.split(`; ${name}`);
+        if (parts.length ===2) return parts.pop().split(';').shift();
+    }
+
+    var client_id = getCookie('user_name');
+    var ws = new WebSocket(`ws://localhost:8000/ws/${client_id}`)
+
+    ws.onmessage = function(event){
+        console.log(event.data);
+        var messages = document.getElementById('messages');
+        var message = document.createElement('li');
+        var content = document.createTextNode(event.data)
+
+        message.appendChild(content);
+        messages.appendChild(message);
+    }
+
+    function sendMessage(event){
+        
+        var input = document.getElementById("messageText");
+        //ws.send(input.value);
+        ws.send(JSON.stringify({
+            payload: {message:input.value}
+        }))
+        input.value = '';
+        event.preventDefault();
+    }
+</script>
