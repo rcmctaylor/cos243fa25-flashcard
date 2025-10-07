@@ -1,16 +1,15 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.templating import Jinja2Templates
-from fastapi import Request
+from fastapi import Request, WebSocket, WebSocketDisconnect, Cookie, Form
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from sqlmodel import Field, SQLModel, Relationship, select
 from contextlib import asynccontextmanager
-from db.session import create_db_and_tables, SessionDep
+from .db.session import create_db_and_tables, get_session, SessionDep
 
 templates = Jinja2Templates(directory="templates")
 
-#new comment for git
 #Database code missing
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -44,6 +43,24 @@ class Deck(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str    
 
+class ConnectionManager:
+
+    def __init__(self):
+        self.active_connections: list[WebSocket] = []
+
+    async def connect(self, websocket:WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def broadcast(self, message:str):
+        for connection in self.active_connections:
+            await connection.send_text(message)
+
+manager = ConnectionManager()
 '''
 user_list =[
     User(id=1, name="Dave", email="rcmc@taylor.edu"),
@@ -71,23 +88,20 @@ async def root(request:Request):
 
 #Query parameter
 @app.get("/cards")
-async def get_cards(q:str=""):
-    search_results = []
-    for card in card_list:
-        if q in card.question:
-            search_results.append(card)
-    return search_results
+async def get_cards(request:Request, session: SessionDep):
+    cards = session.exec(select(Card).order_by(Card.question)).all()
+    return templates.TemplateResponse(
+        request=request, name="cards.html", context={"cards": cards}
+    )
 
 #Path Parameter
 @app.get("/cards/{card_id}", name="get_card", response_class=HTMLResponse)
-async def get_card_by_id(card_id:int, request:Request,):
-    current_card = None
-    for card in card_list:
-        if card.id == card_id:
-            current_card = card
+async def get_card_by_id(card_id:int, request:Request,session: SessionDep):
+    
+    card = session.exec(select(Card, card_id))
 
     return templates.TemplateResponse(
-        request=request, name="card.html", context={"card": current_card}
+        request=request, name="card.html", context={"card": card}
     )
 
 #Post Request to add card
@@ -97,15 +111,41 @@ async def add_card(session: SessionDep, card:Card):
     db_card = Card(question=card.question, answer=card.answer, set_id=card.set_id)
     session.add(db_card) #add card to session
     session.commit() #save Changes to database
-    session.refresh(db_card) #Refreshesh the db_card object with the latest data from the database, like the auto-generated id
+    session.refresh(db_card) #Refresh the db_card object with the latest data from the database, like the auto-generated id
     return db_card
+'''
+    with session.connection() as conn:
+        current_card = conn.execute(
+            text("""
+                INSERT INTO card (question, answer, set_id)
+                 VALUES (:question, :answer, :set_id)
+                 """)
+        ),
+        {
+            "question": card.question,
+            "answer": card.answer,
+            "set_id": card.set_id
+        }
+        row = result.fetchone()
+        session.commit()
+'''
+
 
 @app.get("/sets", name="get_set", response_class=HTMLResponse)
-async def get_sets(session: SessionDep, request:Request):
+async def get_sets(request:Request, session: SessionDep):
     sets = session.exec(select(Set).order_by(Set.name)).all()
     return templates.TemplateResponse(
         request=request, name="sets.html", context={"sets": sets}
     )
+
+@app.post("/sets/add")
+async def add_set(session: SessionDep, name:str):
+    #card_list.append(card)
+    db_set = Set(name=name)
+    session.add(db_set) #add card to session
+    session.commit() #save Changes to database
+    session.refresh(db_set) #Refresh the db_card object with the latest data from the database, like the auto-generated id
+    return db_set
 
 @app.get("/users", name="get_user", response_class=HTMLResponse)
 async def get_users(request:Request):
@@ -113,10 +153,33 @@ async def get_users(request:Request):
         request=request, name="users.html", context={"users": user_list}
     )
 
-@app.post("/sets/add")
-async def create_set(session: SessionDep, set:Set):
-    db_set = Set(name=set.name)
-    session.add(db_set)
-    session.commit()
-    session.refresh(db_set)
-    return db_set
+@app.get("/playwithfriends")
+async def play_game(request:Request, session:SessionDep, response_class=HTMLResponse):
+
+    return templates.TemplateResponse(
+        request=request, name="playwithfriends.html"
+    )
+
+@app.post("/playwithfriends")
+async def enter_play(request:Request, session:SessionDep, response_class=HTMLResponse, user_name: str= Form(...)):
+
+
+    response =  templates.TemplateResponse(
+        request=request, name="playwithfriends.html", context={"user_name":user_name}
+    )
+
+    response.set_cookie(key="user_name",value=user_name, httponly=False)
+    return response
+
+@app.websocket("/ws/{client_id}")
+async def websocket_endpoint(websocket: WebSocket, client_id:str, session:SessionDep):
+    await manager.connect(websocket)
+
+    try:
+        while True:
+            data = await websocket.receive_json()
+            await manager.broadcast(f"{client_id} says: {data['payload']['message']}")
+
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+        await manager.broadcoast(f"Client #{client_id} left the chat")

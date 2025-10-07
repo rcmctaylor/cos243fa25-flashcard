@@ -1,3 +1,13 @@
 body{
     background-color:azure;
 }
+
+nav ul{
+    list-style: none;
+}
+
+nav ul{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+}
