@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, Request, Form, HTTPException
 from sqlmodel import select
-from ..db.session import get_session, SessionDep
-from ..db.models import Card, Set
-from ..core.templates import templates
+from db.session import get_session, SessionDep
+from db.models import Card, Set
+from core.templates import templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 
 router = APIRouter(prefix="/cards")
@@ -30,10 +30,7 @@ async def create_card(session: SessionDep, front: str = Form(...), back: str = F
     session.add(db_card)
     session.commit()
     session.refresh(db_card)
-    #return db_card
-    #return {"message": "Form submitted successfully", "user": db_card.model_dump()}
-    #return templates.TemplateResponse("card.html", {"request": request, "card": card})
-    return RedirectResponse(url=f"/cards/{db_card.id}", status_code=303)
+    return RedirectResponse(url=f"/cards/{db_card.id}", status_code=302)
 
 @router.get("/{id}")
 def get_card(request: Request, session:SessionDep, id:int,action:str="view"):
@@ -48,6 +45,13 @@ def get_card(request: Request, session:SessionDep, id:int,action:str="view"):
       request=request, name="/cards/card.html", context={"card":card, "action":action, "sets":sets}
   )
 
+@router.get("/{card_id}/edit")
+def edit_card(request: Request, session:SessionDep, card_id:int):
+    card = session.exec(select(Card).where(Card.id==card_id)).first()
+    sets = session.exec(select(Set)).all()
+    return templates.TemplateResponse(
+      request=request, name="/cards/add.html", context={"card":card, "sets":sets}
+  )
 
 #Update Cards
 @router.post("/{card_id}/edit", response_model=Card)

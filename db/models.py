@@ -1,4 +1,5 @@
 from sqlmodel import Field, SQLModel, Relationship
+from pydantic import BaseModel
 
 class Set(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -12,3 +13,8 @@ class Card(SQLModel, table=True):
     set_id: int | None = Field(default=None, foreign_key="set.id")
     set: Set | None = Relationship(back_populates="cards")
 
+class UserCookie(BaseModel):
+    session_id: int | None = 0
+    name: str | None = ""
+    score: int | None = 0
+    

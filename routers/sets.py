@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, Request, Form, HTTPException
 from sqlmodel import select
-from ..db.session import get_session, SessionDep
-from ..db.models import Card, Set
-from ..core.templates import templates
+from db.session import get_session, SessionDep
+from db.models import Card, Set
+from core.templates import templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 
 router = APIRouter(prefix="/sets")

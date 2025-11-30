@@ -4,11 +4,9 @@
     {{ super() }}
 {% endblock %}
 {% block content %}
-        <h1>Learn!</h1>       
-        {{card.front}}
+        <h1>Learn!</h1>    
         <button onclick="showElement()">Show answer</button>
         <a href="/learn">Next question -></a>
-        <section id="card_back" class="hidden">{{card.back}}</section>
         <div class="card-grid" onclick="document.getElementById('answer').classList.toggle('fadeIn')">
             <div class="card">            
                 <div class="card-content">

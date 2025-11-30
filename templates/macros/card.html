@@ -1,9 +1,14 @@
 {% macro card(card) %}
-<div class="card">            
+<div class="card" onclick="flipCard(this)">            
     <a href="/cards/{{card.id}}?action=view">
     <div class="card-content">
-    <div class="cardFront">{{card.front}}</div><div class="cardBack">{{card.back}}</div>
+        <div class="cardFront">{{card.front}}</div><div class="cardBack">{{card.back}}</div>
     </div>         
     </a>
 </div>
+<script>
+function flipCard(container) {
+  container.classList.toggle('flipped');
+}
+</script>
 {% endmacro %}

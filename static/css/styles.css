@@ -1,23 +1,23 @@
 /* bad css example*/
-/*
-.card{
-    display: inline-block;
-    border: solid 1px black;
-    max-width: 100px;
-    height: 100px;
-    padding: ;
-}
-    */
+
+
 
 body{
-    background-color: antiquewhite;
+    background-color: rgb(255, 255, 255);
 }
 
 .content-wrapper{
+    
     min-height: 100vh;
     display:flex;    
     flex-direction: column;    
     border:1px solid red;
+    
+}
+
+#content{
+    flex-grow: 2;
+    align-items: flex-start;
 }
 
 /* Every flex item in the content */
@@ -29,22 +29,52 @@ body{
 
 .header{
     text-align: center;
+    min-height: 100px;
+    max-height: 100px;
 }
 
 #content{
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
+     display: flex;
+    flex-direction: column;
+    
 }
 
 footer{
-    flex:1;
-    min-height: 200px;
+    min-height: 100px;
+    max-height: 100px;
+}
+
+.chat{
+    background-color: white;
+    min-height: 20vh;
+    max-height: 20vh;
+    overflow: scroll;
+}
+
+.chat ul{
+    list-style: none;    
+    padding-left: .5rem;
+}
+
+.chat ul li{
+    
 }
 
 /*Nice Grid css example*/
 .card-grid {
+    
   display: grid;
+  width:100%;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  /*
+  grid-template-columns: repeat(5, 1fr);
+  grid-auto-rows: 200px;
+  */
+  /*
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  */
   gap: 1rem; /* adds a gap in between the cards */ 
   padding: 1rem;
 }
@@ -53,6 +83,14 @@ footer{
 
 /* Individual card styling */
 .card {
+    display: inline-block;
+    border: solid 1px rgb(206, 210, 214);
+    
+    max-width: 10rem;
+    height: 10rem;
+
+    padding: 10px;
+
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -64,6 +102,7 @@ footer{
   font-size: 1rem;
   color: #333;
   transition: transform 0.2s ease, box-shadow 0.2s ease;  
+
 }
 
 /* Hover effect */
@@ -91,6 +130,12 @@ footer{
   z-index: 2;
 }
 
+/*
+.card.flipped {
+  transform: rotateY(180deg);
+}*/
+
+
 .cardBack{    
     padding: 0.5rem;
     background-color: rgba(127, 255, 0, 0.70);
@@ -110,37 +155,42 @@ footer{
 }
 
 #topNav{
-    
+    min-height: 100px;
+    max-height: 100px;
 }
 
 #topNav ul{
-    display:flex;
+    list-style: none; 
+    display: flex;
+    flex-direction: row;
     justify-content: flex-start;
+    /*
+    display:flex;
+    
     border: 1px solid goldenrod;
-    list-style: none;   
+     
+    */
 }
 
 
 #topNav li{
+    
     flex: 3;
+    
 }
 
 #topNav .social{
+    /*
     flex:1;
+    */
 }
 
 .toggle-nav{
     display:none;
 }
 
-#content{
-    display: flex;
-    flex-direction: column;
-    height: 50vh; /*vh is. % viewport height*/ 
-}
-
 footer{
-    background: #bdc3c7;
+    background: #e2ecf3;
     height: 100px;
     /*align-self: flex-end;*/
 }
