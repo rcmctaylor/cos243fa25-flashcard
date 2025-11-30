@@ -14,6 +14,7 @@ import asyncio
 import time
 from typing import Dict
 import json
+from pathlib import Path
 
 
 
@@ -28,14 +29,17 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Your frontend origin
+    allow_origins=["*"],  # Your frontend origin
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+BASE_DIR = Path(__file__).resolve().parent
+
+app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
+#app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.include_router(cards.router)
 app.include_router(sets.router)
