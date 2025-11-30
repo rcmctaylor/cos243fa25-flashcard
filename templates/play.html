@@ -45,8 +45,11 @@
             var client_id = getCookie('user_name');
             //client_id = getCookie("session_id")
             //document.querySelector("#ws-id").textContent = client_id;
-            var ws = new WebSocket(`ws://localhost:8000/ws/${client_id}`);
-            
+
+            //var ws = new WebSocket(`ws://localhost:8000/ws/${client_id}`);
+            //ADDED THIS LINE FOR THE RAILWAY APP
+            //SECURE SOCKET INSTEAD OF INSECURE
+            var ws = new WebSocket(`wss://${window.location.host}/ws/${client_id}`);
 
             //When we receive a message add it to the list
             ws.onmessage = function(event) {

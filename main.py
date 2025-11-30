@@ -41,6 +41,20 @@ BASE_DIR = Path(__file__).resolve().parent
 app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
 #app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# Add this middleware
+from starlette.middleware.base import BaseHTTPMiddleware
+
+class ProxyHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        # Trust Railway's proxy headers
+        if "x-forwarded-proto" in request.headers:
+            request.scope["scheme"] = request.headers["x-forwarded-proto"]
+        if "x-forwarded-host" in request.headers:
+            request.scope["server"] = (request.headers["x-forwarded-host"], None)
+        return await call_next(request)
+
+app.add_middleware(ProxyHeadersMiddleware)
+
 app.include_router(cards.router)
 app.include_router(sets.router)
 
