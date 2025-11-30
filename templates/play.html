@@ -1,0 +1,83 @@
+{% extends "/base.html" %}
+{% import "/macros/card.html" as card_macro %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+        <h1>Play!</h1>
+        <section id="authenticated" class="{{ 'fadeOut' if not user_name or user_name == '' or user_name is none else 'fadeIn' }}">
+        <h2>Your ID: <span id="ws-id">{{ user_name }}</span></h2>
+        <section class="chat">
+            <ul id='messages'>
+            </ul>
+        </section>
+
+        <form action="" onsubmit="sendMessage(event)">
+            <input type="text" id="messageText" autocomplete="off"/>
+            <button>Send</button>
+        </form>
+        <form action="" onsubmit="nextQuestion(event)">
+            <button>New Triva Question!</button>
+        </form>
+        
+        
+            <ul id="client-list">
+
+            </ul>
+        </section>   
+
+        <section id="login" class="{{ 'fadeIn' if not user_name or user_name == '' or user_name is none else 'fadeOut' }}">
+            <form action="/play/" method="post">
+                <p>What is your name?</p>
+                <input type="text" id="user_name" name="user_name" autocomplete="off"/>
+                <button>Enter</button>
+            </form>
+        </section>
+
+        <script>
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+            }
+
+            var client_id = Date.now();
+            var client_id = getCookie('user_name');
+            //client_id = getCookie("session_id")
+            //document.querySelector("#ws-id").textContent = client_id;
+            var ws = new WebSocket(`ws://localhost:8000/ws/${client_id}`);
+            
+
+            //When we receive a message add it to the list
+            ws.onmessage = function(event) {
+                var messages = document.getElementById('messages')
+                var message = document.createElement('li')
+                var content = document.createTextNode(event.data)
+                message.appendChild(content)
+                messages.appendChild(message)
+            };
+
+            //When we send a message, clear the that box
+            function sendMessage(event) {
+                var input = document.getElementById("messageText")
+                //ws.send(input.value)
+                ws.send(JSON.stringify({
+                    type:"chat",
+                    payload: {message:input.value}
+                }));
+                input.value = ''
+                //lets the browser know that 
+                event.preventDefault()
+            }
+
+            function nextQuestion(event) {
+                //ws.send("NextQuestion")
+                ws.send(JSON.stringify({
+                    type: "trivia",
+                    payload: {action:"nextQuestion"}
+                }));
+                event.preventDefault()
+            }
+        </script>
+
+ {% endblock %}
