@@ -20,7 +20,8 @@ def test_read_main():
     response = client.get("/")
     assert response.status_code == 200
     assert "Flashcard" in response.content.decode()
-    assert "This code will make the test fail" in response.content.decode()
+    #Remove our failing line
+    #assert "This code will make the test fail" in response.content.decode()
 
 '''
 def test_read_main():
