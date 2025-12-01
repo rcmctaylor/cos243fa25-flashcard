@@ -1,8 +1,11 @@
 
 
+name: CI/CD for FastAPI on Railway
+
+on:
   push:
-    branches:
-      - main
+      branches:
+        - main
 
 jobs:
   test:
@@ -21,3 +24,17 @@ jobs:
 
       - name: Run tests
         run: pytest
+
+  deploy:
+    needs: test  # Only runs if 'test' job succeeds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Deploy to Railway
+        run: railway up
+        env: 
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
